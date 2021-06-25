@@ -193,7 +193,11 @@ class FoamMesh(object):
             if is_integer(lc):
                 num = int(lc)
                 if not is_binary:
-                    data = np.array([ln[1:-2].split() for ln in content[n + 2:n + 2 + num]], dtype=float)
+                    data = []
+                    match_number = re.compile(b'-?\ *[0-9]+\.?[0-9]*(?:[Ee]\ *-?\ *[0-9]+)?')
+                    for ln in content[n + 2:n + 2 + num]:
+                        data += [ np.array([i for i in re.findall(match_number, ln)], dtype=float) ]
+                    data = np.array(data)
                 else:
                     buf = b''.join(content[n+1:])
                     disp = struct.calcsize('c')
